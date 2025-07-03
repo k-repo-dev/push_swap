@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/26 10:12:00 by krepo             #+#    #+#             */
-/*   Updated: 2025/06/30 10:06:29 by krepo            ###   ########.fr       */
+/*   Created: 2025/07/03 10:37:54 by krepo             #+#    #+#             */
+/*   Updated: 2025/07/03 10:46:00 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static void	push(t_stack_node **dst, t_stack_node **src)
 	else
 	{
 		node_to_push->next = *dst;
-		node_to_push->next->prev = node_to_push;
-		node_to_push->next = NULL;
+		(*dst)->prev = node_to_push;
+		*dst = node_to_push;
 	}
 }

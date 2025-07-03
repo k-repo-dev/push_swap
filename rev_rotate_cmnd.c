@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/26 12:23:48 by krepo             #+#    #+#             */
-/*   Updated: 2025/06/27 12:10:14 by krepo            ###   ########.fr       */
+/*   Created: 2025/07/03 10:46:28 by krepo             #+#    #+#             */
+/*   Updated: 2025/07/03 13:14:30 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ void	rrr(t_stack_node **a, t_stack_node **b, bool checker)
 		write(1, "rrr\n", 4);
 }
 
-void	rev_rotate_both(t_stack_node **a, t_stack_node **b, t_stack_node *cheapest_node)
+void	rev_rotate_both(t_stack_node **a, t_stack_node **b,
+						t_stack_node *cheapest_node)
 {
 	while (*b != cheapest_node->target_node && *a != cheapest_node)
 		rrr(a, b, false);
@@ -48,12 +49,12 @@ static void	rev_rotate(t_stack_node **stack)
 {
 	t_stack_node	*last;
 
-	if (!stack || !(*stack)->next)
+	if (!stack || !(*stack) || !(*stack)->next)
 		return ;
-	last = find_last(*stack);
+	last = find_last_node(*stack);
 	last->prev->next = NULL;
 	last->next = *stack;
 	last->prev = NULL;
+	(*stack)->prev = last;
 	*stack = last;
-	last->next->prev = last;
 }

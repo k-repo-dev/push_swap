@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/26 10:21:19 by krepo             #+#    #+#             */
-/*   Updated: 2025/06/26 10:31:53 by krepo            ###   ########.fr       */
+/*   Created: 2025/07/03 12:24:30 by krepo             #+#    #+#             */
+/*   Updated: 2025/07/03 13:17:47 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,15 +36,22 @@ void	ss(t_stack_node **a, t_stack_node **b, bool checker)
 		write(1, "ss\n", 3);
 }
 
-static void	swap(t_stack_node	**head)
+static void	swap(t_stack_node **head)
 {
-	if (*head == NULL || head == NULL)
+	t_stack_node	*first;
+	t_stack_node	*second;
+	t_stack_node	*third;
+
+	if (!head || !(*head) || !(*head)->next)
 		return ;
-	*head = (*head)->next;
-	(*head)->prev->prev = *head;
-	(*head)->prev->next = (*head)->next;
-	if ((*head)->next)
-		(*head)->next->prev = (*head)->prev;
-	(*head)->next = (*head)->prev;
-	(*head)->prev = NULL;
+	first = *head;
+	second = first->next;
+	third = second->next;
+	*head = second;
+	second->prev = NULL;
+	second->next = first;
+	first->prev = second;
+	first->next = third;
+	if (third)
+		third->prev = first;
 }

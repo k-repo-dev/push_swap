@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/27 12:14:37 by krepo             #+#    #+#             */
-/*   Updated: 2025/06/30 10:04:54 by krepo            ###   ########.fr       */
+/*   Created: 2025/07/01 10:50:52 by krepo             #+#    #+#             */
+/*   Updated: 2025/07/03 13:21:00 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,18 @@
 
 int	error_syntax(char *str_nbr)
 {
-	if (!(*str_nbr == '+' || *str_nbr == '-' || (*str_nbr >= '0' && *str_nbr <= '9')))
+	int	i;
+
+	i = 0;
+	if (str_nbr[i] == '\0')
 		return (1);
-	if ((*str_nbr == '+' || *str_nbr == '-') && !(str_nbr[1] >= '0' && str_nbr[1] <= '9'))
+	if (str_nbr[i] == '+' || str_nbr[i] == '-')
+		i++;
+	if (!(str_nbr[i] >= '0' && str_nbr[i] <= '9'))
 		return (1);
-	while (*++str_nbr)
+	while (str_nbr[i])
 	{
-		if (!(*str_nbr >= '0' && *str_nbr <= '9'))
+		if (!(str_nbr[i] >= '0' && str_nbr[i] <= '9'))
 			return (1);
 	}
 	return (0);
@@ -44,22 +49,36 @@ void	free_stack(t_stack_node **stack)
 	t_stack_node	*tmp;
 	t_stack_node	*current;
 
-	if (!stack)
+	if (!stack || !(*stack))
 		return ;
 	current = *stack;
 	while (current)
 	{
 		tmp = current->next;
-		current->value = 0;
 		free(current);
 		current = tmp;
 	}
-	*stack =NULL;
+	*stack = NULL;
 }
 
 void	free_errors(t_stack_node **a)
 {
 	free_stack(a);
-	write(1, "Error\n", 6);
+	write(2, "Error\n", 6);
 	exit(1);
+}
+
+void	free_matrix(char *av[])
+{
+	int	i;
+
+	i = 0;
+	if (!av)
+		return ;
+	while (av[i])
+	{
+		free(av[i]);
+		i++;
+	}
+	free(av);
 }

@@ -5,86 +5,81 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/25 09:45:55 by krepo             #+#    #+#             */
-/*   Updated: 2025/06/26 15:36:08 by krepo            ###   ########.fr       */
+/*   Created: 2025/07/03 11:56:03 by krepo             #+#    #+#             */
+/*   Updated: 2025/07/03 13:21:55 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-static int	ft_count_words(char *str, char c);
-static char		*ft_get_next_word(char *str, char c);
+static int	count_words(char *str, char c);
+static char	*get_next_word(char *str, char c, int *pos);
 
 char	**ft_split(char *str, char c)
 {
 	int		word_count;
-	char	**result;
+	char	**split;
 	int		i;
+	int		pos;
 
 	i = 0;
-	word_count = ft_count_words(str, c);
-	if (!word_count)
-		exit(1);
-	result = malloc(sizeof(char *) * (size_t)(word_count + 2));
-	if (!result)
+	pos = 0;
+	word_count = count_words(str, c);
+	if (!word_count && str[0] == '\0')
 		return (NULL);
-	while (word_count-- >= 0)
-	{
-		if (i == 0)
-		{
-			result[i] = malloc(sizeof(char));
-			if (!result[i])
-				return (NULL);
-			result[i++][0] = '\0';
-			continue ;
-		}
-		result[i++] = ft_get_next_word(str, c);
-	}
-	result[i] = NULL;
-	return (result);
+	if (!word_count && str[0] != '\0')
+		exit(1);
+	split = malloc(sizeof(char *) * (word_count + 1));
+	if (!split)
+		return (NULL);
+	while (i < word_count)
+		split[i++] = get_next_word(str, c, &pos);
+	split[i] = NULL;
+	return (split);
 }
 
-static int	ft_count_words(char *str, char c)
+static int	count_words(char *str, char c)
 {
-	int	count;
+	int		count;
 	bool	in_word;
 
 	count = 0;
 	while (*str)
 	{
-		in_word = false; 
-		while (*str == c)
-			str++;
-		while(*str != c && *str)
-			if (!in_word)
-			{
-				count++;
-				in_word = true;
-			}
+		if (*str == c)
+			in_word = false;
+		else if (!in_word)
+		{
+			count++;
+			in_word = true;
+		}
 		str++;
 	}
 	return (count);
 }
 
-static char	*ft_get_next_word(char *str, char c)
+static char	*get_next_word(char *str, char c, int *pos)
 {
-	static int	position;
-	char		*next_word;
-	int			len;
-	int			i;
-	
-	position = 0;
-	len = 0;
+	char	*word;
+	int		start;
+	int		len;
+	int		i;
+
 	i = 0;
-	while (str[position] == c)
-		position++;
-	while ((str[position + len] != c) && str[position + len])
-		len++;
-	next_word = malloc((size_t)len * sizeof(char) + 1);
-	if (!next_word)
+	while (str[*pos] == c)
+		(*pos)++;
+	start = *pos;
+	while (str[*pos] && str[*pos] != c)
+		(*pos)++;
+	len = *pos - start;
+	word = malloc(len + 1);
+	if (!word)
 		return (NULL);
-	while ((str[position] != c) && str[position])
-		next_word[i++] = str[position++];
-	next_word[i] = '\0';
-	return (next_word);
+	while (i < len)
+	{
+		word[i] = str[start + i];
+		i++;
+	}
+	word[len] = '\0';
+	return (word);
 }

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/26 12:09:56 by krepo             #+#    #+#             */
-/*   Updated: 2025/06/27 14:18:30 by krepo            ###   ########.fr       */
+/*   Created: 2025/07/03 10:55:35 by krepo             #+#    #+#             */
+/*   Updated: 2025/07/03 13:22:33 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ void	ra(t_stack_node **a, bool checker)
 {
 	rotate(a);
 	if (!checker)
-		write(1, "r\n", 3);
+		write(1, "ra\n", 3);
 }
 
-void	rb(t_stack_node	**b, bool checker)
+void	rb(t_stack_node **b, bool checker)
 {
 	rotate(b);
 	if (!checker)
@@ -36,7 +36,8 @@ void	rr(t_stack_node **a, t_stack_node **b, bool checker)
 		write(1, "rr\n", 3);
 }
 
-void	rotate_both(t_stack_node **a, t_stack_node **b, t_stack_node *cheapest_node)
+void	rotate_both(t_stack_node **a, t_stack_node **b,
+					t_stack_node *cheapest_node)
 {
 	while (*b != cheapest_node->target_node && *a != cheapest_node)
 		rr(a, b, false);
@@ -46,14 +47,16 @@ void	rotate_both(t_stack_node **a, t_stack_node **b, t_stack_node *cheapest_node
 
 static void	rotate(t_stack_node **stack)
 {
+	t_stack_node	*first_node;
 	t_stack_node	*last_node;
 
-	if (*stack == NULL || stack == NULL)
+	if (!stack || !(*stack) || !(*stack)->next)
 		return ;
-	last_node = find_last(*stack);
-	last_node->next = *stack;
-	*stack = (*stack)->next;
+	first_node = *stack;
+	last_node = find_last_node(*stack);
+	*stack = first_node->next;
 	(*stack)->prev = NULL;
-	last_node->next->prev = last_node;
-	last_node->next->next = NULL;
+	first_node->next = NULL;
+	first_node->prev = last_node;
+	last_node->next = first_node;
 }

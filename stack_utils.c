@@ -5,41 +5,41 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/27 09:28:31 by krepo             #+#    #+#             */
-/*   Updated: 2025/06/27 13:57:57 by krepo            ###   ########.fr       */
+/*   Created: 2025/07/03 12:10:41 by krepo             #+#    #+#             */
+/*   Updated: 2025/07/03 13:40:02 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-int	stack_len(t_stack_node	*stack)
+t_stack_node	*find_last_node(t_stack_node *head)
+{
+	if (!head)
+		return (NULL);
+	while (head->next)
+		head = head->next;
+	return (head);
+}
+
+int	stack_len(t_stack_node *stack)
 {
 	int	count;
 
+	count = 0;
 	if (!stack)
 		return (0);
-	count = 0;
 	while (stack)
 	{
-		stack = stack->next;
 		count++;
+		stack = stack->next;
 	}
 	return (count);
-}
-
-t_stack_node	*find_last(t_stack_node *stack)
-{
-	if (!stack)
-		return (NULL);
-	while (stack->next)
-		stack = stack->next;
-	return (stack);
 }
 
 bool	stack_sorted(t_stack_node *stack)
 {
 	if (!stack)
-		return (1);
+		return (true);
 	while (stack->next)
 	{
 		if (stack->value > stack->next->value)
@@ -49,42 +49,51 @@ bool	stack_sorted(t_stack_node *stack)
 	return (true);
 }
 
-t_stack_node	*find_min(t_stack_node *stack)
+long	ft_atol(const char *str)
 {
-	long			min;
-	t_stack_node	*min_node;
+	long	num;
+	int		sign;
 
-	if(!stack)
-		return (NULL);
-	min = LONG_MAX;
-	while (stack)
+	num = 0;
+	sign = 1;
+	while (*str == ' ' || *str == '\t' || *str == '\n'
+		|| *str == '\r' || *str == '\f' || *str == '\v')
+		str++;
+	if (*str == '+' || *str == '-')
 	{
-		if (stack->value < min)
-		{
-			min = stack->value;
-			min_node = stack;
-		}
-		stack = stack->next;
+		if (*str == '-')
+			sign = -1;
+		str++;
 	}
-	return (min_node);
+	while (*str >= '0' && *str <= '9')
+		num = num * 10 + (*str++ - '0');
+	return (num * sign);
 }
 
-t_stack_node	*find_max(t_stack_node *stack)
+void	append_node(t_stack_node **stack, int nbr)
 {
-	long			max;
-	t_stack_node	*max_node;
+	t_stack_node	*node;
+	t_stack_node	*last_node;
 
 	if (!stack)
-		return (NULL);
-	max = LONG_MIN;
-	while (stack)
+		return ;
+	node = malloc(sizeof(t_stack_node));
+	if (!node)
+		return ;
+	node->next = NULL;
+	node->value = nbr;
+	node->cheapest = false;
+	node->target_node = NULL;
+	node->push_price = 0;
+	node->current_position = 0;
+	node->above_median = false;
+	node->prev = NULL;
+	if (!(*stack))
+		*stack = node;
+	else
 	{
-		if (stack->value > max)
-		{
-			max = stack->value;
-			max_node = stack;
-		}
-		stack = stack->next;
+		last_node = find_last_node(*stack);
+		last_node->next = node;
+		node->prev = last_node;
 	}
-	return (max_node);
 }

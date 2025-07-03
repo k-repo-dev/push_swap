@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_a_to_b.c                                      :+:      :+:    :+:   */
+/*   init_nodes.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/27 10:17:07 by krepo             #+#    #+#             */
-/*   Updated: 2025/06/30 10:10:23 by krepo            ###   ########.fr       */
+/*   Created: 2025/07/02 10:08:15 by krepo             #+#    #+#             */
+/*   Updated: 2025/07/02 10:27:14 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	current_index(t_stack_node *stack)
 	median = stack_len(stack) / 2;
 	while (stack)
 	{
-		stack->index = i;
+		stack->current_position = i;
 		if (i <= median)
 			stack->above_median = true;
 		else
@@ -36,24 +36,27 @@ void	current_index(t_stack_node *stack)
 	}
 }
 
-void	set_cheapest(t_stack_node  *stack)
+void	set_cheapest(t_stack_node *stack)
 {
-	long			cheapest_value;
 	t_stack_node	*cheapest_node;
+	long			cheapest_value;
 
 	if (!stack)
 		return ;
 	cheapest_value = LONG_MAX;
+	cheapest_node = NULL;
 	while (stack)
 	{
-		if (stack->push_cost < cheapest_value)
+		stack->cheapest = false;
+		if (stack->push_price < cheapest_value)
 		{
-			cheapest_value = stack->push_cost;
+			cheapest_value = stack->push_price;
 			cheapest_node = stack;
 		}
 		stack = stack->next;
 	}
-	cheapest_node->cheapest = true;
+	if (cheapest_node)
+		cheapest_node->cheapest = true;
 }
 
 void	init_nodes_a(t_stack_node *a, t_stack_node *b)
@@ -69,23 +72,24 @@ static void	set_target_a(t_stack_node *a, t_stack_node *b)
 {
 	t_stack_node	*current_b;
 	t_stack_node	*target_node;
-	long			best_match_index;
+	long			best_match_value;
 
 	while (a)
 	{
-		best_match_index = LONG_MIN;
+		best_match_value = LONG_MIN;
+		target_node = NULL;
 		current_b = b;
 		while (current_b)
 		{
 			if (current_b->value < a->value
-				&& current_b->value > best_match_index)
+				&& current_b->value > best_match_value)
 			{
-				best_match_index = current_b->value;
+				best_match_value = current_b->value;
 				target_node = current_b;
 			}
 			current_b = current_b->next;
 		}
-		if (best_match_index == LONG_MIN)
+		if (target_node == NULL)
 			a->target_node = find_max(b);
 		else
 			a->target_node = target_node;
@@ -102,13 +106,14 @@ static void	cost_analysis_a(t_stack_node *a, t_stack_node *b)
 	len_b = stack_len(b);
 	while (a)
 	{
-		a->push_cost = a->index;
-		if (!(a->above_median))
-			a->push_cost = len_a - (a->index);
-		if (a->target_node->above_median)
-			a->push_cost += a->target_node->index;
+		if (a->above_median)
+			a->push_price = a->current_position;
 		else
-			a->push_cost  += len_b - (a->target_node->index);
+			a->push_price = len_a -(a->current_position);
+		if (a->target_node->above_median)
+			a->push_price += a->target_node->current_position;
+		else
+			a->push_price += len_b - (a->target_node->current_position);
 		a = a->next;
 	}
 }
